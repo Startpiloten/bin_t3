@@ -1,0 +1,23 @@
+develop:
+  user: p123456
+  host: p123456.mittwaldserver.info
+  path: html/develop
+  mysql:
+    database: usr_p123456_1
+    user: p123456
+    pw: xyz
+    host: db1234.mydbserver.com
+
+master:
+  user: p123456
+  host: p123456.mittwaldserver.info
+  path: html/develop
+  mysql:
+    database: usr_p123456_1
+    user: p123456
+    pw: xyz
+    host: db1234.mydbserver.com
+
+local:
+  db: db_local
+  domain: tdl.local

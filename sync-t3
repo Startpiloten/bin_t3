@@ -1,0 +1,99 @@
+#!/bin/bash
+
+#parse_yaml function
+parse_yaml() {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
+
+# Check YAML files
+if [ ! -f .t3.sync.yaml ]; then
+    echo ".t3.sync.yaml not found!"
+    cp ~/bin_t3/lib/.t3.sync.yaml .t3.sync.yaml
+    (echo "" && echo ".t3.sync.yaml") >> .gitignore
+    exit
+fi
+
+# Read yaml file
+load_yaml() {
+    eval $(parse_yaml .t3.sync.yaml "secret_")
+}
+
+#General variables
+NOVAR="Missing entry in the YAML"
+
+load_yaml
+
+echo
+echo "Develop >>"
+echo "Webspace User:" $secret_develop_user
+echo "Webspace User:" $secret_develop_host
+echo "Webspace Path:" $secret_develop_path
+echo "MySQL Database:" $secret_develop_mysql_database
+echo "MySQL User:" $secret_develop_mysql_user
+echo "MySQL Host:" $secret_develop_mysql_host
+echo "MySQL Password:" $secret_develop_mysql_pw
+
+echo
+echo "Master >>"
+echo "Webspace User:" $secret_master_user
+echo "Webspace User:" $secret_master_host
+echo "Webspace Path:" $secret_master_path
+echo "MySQL Database:" $secret_master_mysql_database
+echo "MySQL User:" $secret_master_mysql_user
+echo "MySQL Host:" $secret_master_mysql_host
+echo "MySQL Password:" $secret_master_mysql_pw
+echo
+
+echo
+echo "Local >>"
+echo "Database:" $secret_local_db
+echo "Domain:" $secret_local_domain
+echo
+
+sync_develop(){
+rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/fileadmin/* web/fileadmin
+rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/uploads/* web/uploads
+
+ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -proot -uroot ${secret_local_db}
+}
+
+sync_master(){
+rsync -avz --exclude '_processed_' $secret_master_user@$secret_master_host:$secret_master_path/fileadmin/* web/fileadmin
+rsync -avz --exclude '_processed_' $secret_master_user@$secret_master_host:$secret_master_path/uploads/* web/uploads
+
+ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -proot -uroot ${secret_local_db}
+}
+
+
+PS3='Please enter your choice: '
+options=("Sync Develop" "Sync Master" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Sync Develop")
+            sync_develop
+            exit
+            ;;
+        "Sync Master")
+            sync_develop
+            exit
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo "invalid option $REPLY";;
+    esac
+done
