@@ -88,7 +88,7 @@ do
             exit
             ;;
         "Sync Master")
-            sync_develop
+            sync_master
             exit
             ;;
         "Quit")
