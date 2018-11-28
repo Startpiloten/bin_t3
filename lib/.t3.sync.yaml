@@ -19,5 +19,6 @@ master:
     host: db1234.mydbserver.com
 
 local:
+  webroot: public
   db: db_local
   domain: tdl.local
