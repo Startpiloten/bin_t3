@@ -20,5 +20,9 @@ master:
 
 local:
   webroot: public
-  db: db_local
   domain: tdl.local
+  mysql:
+    database: db_local
+    user: root
+    pw: root
+    host: 127.0.0.1

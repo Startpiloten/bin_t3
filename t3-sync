@@ -63,13 +63,27 @@ echo "MySQL Password:" $secret_master_mysql_pw
 echo
 
 echo "Local >>"
-echo "Database:" $secret_local_db
 echo "Domain:" $secret_local_domain
 echo "Webroot:" $secret_local_webroot
+echo "MySQL Database:" $secret_local_mysql_database
+echo "MySQL User:" $secret_local_mysql_user
+echo "MySQL Host:" $secret_local_mysql_host
+echo "MySQL Password:" $secret_local_mysql_pw
 echo
 
+if [ -z "$secret_local_mysql_database" ]
+then
+	printf $RED
+	echo "Please update your .t3.sync.yaml file - Have a look here:"
+	echo "https://github.com/Startpiloten/bin_t3/blob/master/lib/.t3.sync.yaml"
+	printf $NC
+	exit
+fi
+
+printf $NC
+
 sync_develop_db_files(){
-	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -proot -uroot ${secret_local_db}
+	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 
 	rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/fileadmin ${secret_local_webroot}/
 	rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/uploads ${secret_local_webroot}/
@@ -77,7 +91,7 @@ sync_develop_db_files(){
 }
 
 sync_develop_db(){
-	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -proot -uroot ${secret_local_db}
+	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 
 }
 
@@ -88,14 +102,14 @@ sync_develop_dbfile(){
 
 
 sync_master_db_files(){
-	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -proot -uroot ${secret_local_db}
+	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 
 	rsync -avz --exclude '_processed_' $secret_master_user@$secret_master_host:$secret_master_path/fileadmin ${secret_local_webroot}/
 	rsync -avz --exclude '_processed_' $secret_master_user@$secret_master_host:$secret_master_path/uploads ${secret_local_webroot}/
 }
 
 sync_master_db(){
-	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -proot -uroot ${secret_local_db}
+	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 }
 
 sync_master_dbfile(){
