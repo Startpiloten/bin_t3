@@ -11,7 +11,7 @@ develop:
 master:
   user: p123456
   host: p123456.mittwaldserver.info
-  path: html/develop
+  path: html/master
   mysql:
     database: usr_p123456_1
     user: p123456
