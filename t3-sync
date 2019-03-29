@@ -41,6 +41,8 @@ NOVAR="Missing entry in the YAML"
 
 load_yaml
 
+UTF8='--default-character-set=utf8'
+
 echo
 echo "Develop >>"
 echo "Webspace User:" $secret_develop_user
@@ -83,7 +85,7 @@ fi
 printf $NC
 
 sync_develop_db_files(){
-	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
+	ssh ${secret_develop_user}@${secret_develop_host} mysqldump ${UTF8} -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 
 	rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/fileadmin ${secret_local_webroot}/
 	rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/uploads ${secret_local_webroot}/
@@ -91,29 +93,29 @@ sync_develop_db_files(){
 }
 
 sync_develop_db(){
-	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
+	ssh ${secret_develop_user}@${secret_develop_host} mysqldump ${UTF8} -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 
 }
 
 sync_develop_dbfile(){
-	ssh ${secret_develop_user}@${secret_develop_host} mysqldump -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} > ${secret_develop_mysql_database}.sql
+	ssh ${secret_develop_user}@${secret_develop_host} mysqldump ${UTF8} -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} > ${secret_develop_mysql_database}.sql
 
 }
 
 
 sync_master_db_files(){
-	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
+	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 
 	rsync -avz --exclude '_processed_' $secret_master_user@$secret_master_host:$secret_master_path/fileadmin ${secret_local_webroot}/
 	rsync -avz --exclude '_processed_' $secret_master_user@$secret_master_host:$secret_master_path/uploads ${secret_local_webroot}/
 }
 
 sync_master_db(){
-	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
+	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql ${UTF8}-p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 }
 
 sync_master_dbfile(){
-	ssh ${secret_master_user}@${secret_master_host} mysqldump -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} > ${secret_master_mysql_database}.sql
+	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} > ${secret_master_mysql_database}.sql
 }
 
 printf ${ORANGE}
