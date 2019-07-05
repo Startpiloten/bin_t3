@@ -111,7 +111,7 @@ sync_master_db_files(){
 }
 
 sync_master_db(){
-	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql ${UTF8}-p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
+	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} | mysql ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
 }
 
 sync_master_dbfile(){
