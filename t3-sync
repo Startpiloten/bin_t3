@@ -89,17 +89,22 @@ sync_develop_db_files(){
 
 	rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/fileadmin ${secret_local_webroot}/
 	rsync -avz --exclude '_processed_' $secret_develop_user@$secret_develop_host:$secret_develop_path/uploads ${secret_local_webroot}/
-
 }
 
 sync_develop_db(){
 	ssh ${secret_develop_user}@${secret_develop_host} mysqldump ${UTF8} -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} | mysql ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database}
-
 }
 
 sync_develop_dbfile(){
 	ssh ${secret_develop_user}@${secret_develop_host} mysqldump ${UTF8} -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} > ${secret_develop_mysql_database}.sql
+}
 
+print_develop_sql(){
+    echo "Develop Mysqldump:"
+    printf ${ORANGE}
+	echo "mysqldump ${UTF8} -u${secret_develop_mysql_user} -p${secret_develop_mysql_pw} -h${secret_develop_mysql_host} ${secret_develop_mysql_database} > ${secret_develop_mysql_database}.sql"
+	echo
+	printf ${NC}
 }
 
 
@@ -118,6 +123,14 @@ sync_master_dbfile(){
 	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} > ${secret_master_mysql_database}.sql
 }
 
+print_master_sql(){
+    echo "Master Mysqldump:"
+    printf ${ORANGE}
+	echo "mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} > ${secret_master_mysql_database}.sql"
+	echo
+	printf ${NC}
+}
+
 backup_local_db(){
     mysqldump ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database} > ${secret_local_mysql_database}.sql
 }
@@ -131,43 +144,53 @@ printf ${NC}
 COLUMNS=10
 PS3='Please enter your choice: '
 options=(
-    "Sync Develop (DB and Files)"
-    "Sync Develop (DB only)"
-    "Get  Develop (DB as File)"
-    "Sync Master (DB and Files)"
-    "Sync Master (DB only)"
-    "Get  Master (DB as File)"
-    "Export Local (DB only)"
+    "Develop:: Sync (DB and Files)"
+    "Develop:: Sync (DB only)"
+    "Develop:: Get (DB as File)"
+    "Develop:: Print (Mysql Export query)"
+    "Master:: Sync (DB and Files)"
+    "Master:: Sync (DB only)"
+    "Master:: Get (DB as File)"
+    "Master:: Print (Mysql Export query)"
+    "Local:: Export (DB only)"
     "Quit"
 )
 select opt in "${options[@]}"
 do
     case $opt in
-        "Sync Develop (DB and Files)")
+        "Develop:: Sync (DB and Files)")
             sync_develop_db_files
             exit
             ;;
-        "Sync Develop (DB only)")
+        "Develop:: Sync (DB only)")
             sync_develop_db
             exit
             ;;
-        "Get  Develop (DB as File)")
+        "Develop:: Get (DB as File)")
             sync_develop_dbfile
             exit
             ;;
-        "Sync Master (DB and Files)")
+        "Develop:: Print (Mysql Export query)")
+            print_develop_sql
+            exit
+            ;;
+        "Master:: Sync (DB and Files)")
             sync_master_db_files
             exit
             ;;
-        "Sync Master (DB only)")
+        "Master:: Sync (DB only)")
             sync_master_db
             exit
             ;;
-        "Get  Master (DB as File)")
+        "Master:: Get (DB as File)")
             sync_master_dbfile
             exit
             ;;
-        "Export Local (DB only)")
+        "Master:: Print (Mysql Export query)")
+            print_develop_sql
+            exit
+            ;;
+        "Local:: Export (DB only)")
             backup_local_db
             exit
             ;;
