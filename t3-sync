@@ -118,6 +118,10 @@ sync_master_dbfile(){
 	ssh ${secret_master_user}@${secret_master_host} mysqldump ${UTF8} -u${secret_master_mysql_user} -p${secret_master_mysql_pw} -h${secret_master_mysql_host} ${secret_master_mysql_database} > ${secret_master_mysql_database}.sql
 }
 
+backup_local_db(){
+    mysqldump ${UTF8} -p${secret_local_mysql_pw} -u${secret_local_mysql_user} -h${secret_local_mysql_host} ${secret_local_mysql_database} > ${secret_local_mysql_database}.sql
+}
+
 printf ${ORANGE}
 echo "======================="
 echo "T3 Sync - Please Select"
@@ -133,6 +137,7 @@ options=(
     "Sync Master (DB and Files)"
     "Sync Master (DB only)"
     "Get  Master (DB as File)"
+    "Export Local (DB only)"
     "Quit"
 )
 select opt in "${options[@]}"
@@ -160,6 +165,10 @@ do
             ;;
         "Get  Master (DB as File)")
             sync_master_dbfile
+            exit
+            ;;
+        "Export Local (DB only)")
+            backup_local_db
             exit
             ;;
         "Quit")
