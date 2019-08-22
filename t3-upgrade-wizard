@@ -1,0 +1,30 @@
+#!/bin/bash
+echo
+echo 'Start Update'
+echo
+php typo3cms database:updateschema
+php typo3cms database:updateschema
+
+php typo3cms upgrade:wizard extensionManagerTables --force
+php typo3cms upgrade:wizard wizardDoneToRegistry --force
+php typo3cms upgrade:wizard startModuleUpdate --force
+php typo3cms upgrade:wizard frontendUserImageUpdateWizard --force
+php typo3cms upgrade:wizard databaseRowsUpdateWizard --force
+php typo3cms upgrade:wizard commandLineBackendUserRemovalUpdate --force
+php typo3cms upgrade:wizard fillTranslationSourceField --force
+php typo3cms upgrade:wizard sectionFrameToFrameClassUpdate --force
+php typo3cms upgrade:wizard splitMenusUpdate --force
+php typo3cms upgrade:wizard bulletContentElementUpdate --force
+php typo3cms upgrade:wizard uploadContentElementUpdate --force
+php typo3cms upgrade:wizard migrateFscStaticTemplateUpdate --force
+php typo3cms upgrade:wizard fileReferenceUpdate --force
+php typo3cms upgrade:wizard migrateFeSessionDataUpdate --force
+php typo3cms upgrade:wizard sysLanguageSorting --force
+php typo3cms upgrade:wizard pagesUrltypeField --force
+php typo3cms upgrade:wizard separateSysHistoryFromLog --force
+php typo3cms upgrade:wizard cshmanualBackendUsers --force
+php typo3cms upgrade:wizard pagesLanguageOverlay --force
+php typo3cms upgrade:wizard pagesLanguageOverlayBeGroupsAccessRights --force
+php typo3cms upgrade:wizard backendLayoutIcons --force
+php typo3cms upgrade:wizard pagesSlugs --force
+php typo3cms upgrade:wizard formFileExtension --force
